@@ -11,7 +11,7 @@ static NSString *const PLATFORM_CHANNEL = @"PonnamKarthik/flutter_youtube";
     FlutterMethodChannel *shareChannel =
     [FlutterMethodChannel methodChannelWithName:PLATFORM_CHANNEL
                                 binaryMessenger:registrar.messenger];
-    
+
     [shareChannel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
         if ([@"playYoutubeVideo" isEqualToString:call.method]) {
             NSDictionary *arguments = [call arguments];
@@ -22,19 +22,19 @@ static NSString *const PLATFORM_CHANNEL = @"PonnamKarthik/flutter_youtube";
                        [FlutterError errorWithCode:@"error" message:@"Non-empty text expected for id" details:nil]);
                 return;
             }
-            
+
             NSString *api = arguments[@"api"];
-            
+
             if (api.length == 0) {
                 result(
                        [FlutterError errorWithCode:@"error" message:@"Non-empty text expected for api" details:nil]);
                 return;
             }
-            
+
             // Boolean fullscreen = arguments[@"originY"];
-            
+
             [self playVideo: youtubeId];
-            
+
             result(nil);
         } else {
             result(FlutterMethodNotImplemented);
@@ -46,10 +46,12 @@ static NSString *const PLATFORM_CHANNEL = @"PonnamKarthik/flutter_youtube";
     /*XCDYouTubeVideoPlayerViewController *videoPlayerViewController = [[XCDYouTubeVideoPlayerViewController alloc] initWithVideoIdentifier:ytid];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayerPlaybackDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:videoPlayerViewController.moviePlayer];
     [[[[[UIApplication sharedApplication] delegate] window] rootViewController] presentMoviePlayerViewControllerAnimated: videoPlayerViewController];*/
-    
+
+    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+
     AVPlayerViewController *playerViewController = [AVPlayerViewController new];
     [[UIApplication sharedApplication].windows.firstObject.rootViewController presentViewController:playerViewController animated:YES completion:nil];
-    
+
     __weak AVPlayerViewController *weakPlayerViewController = playerViewController;
     [[XCDYouTubeClient defaultClient] getVideoWithIdentifier:ytid completionHandler:^(XCDYouTubeVideo * _Nullable video, NSError * _Nullable error) {
     if (video)
